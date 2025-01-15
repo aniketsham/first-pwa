@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import { useAppSelector } from "../hooks/hooks";
+import { useNavigate } from "react-router-dom";
 
 interface User {
   id: number;
@@ -14,7 +16,14 @@ interface User {
 const Home: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const { email, password } = useAppSelector((state) => state.user);
 
+  const navigateTo = useNavigate();
+  useEffect(() => {
+    if (!email && !password) {
+      navigateTo("/login");
+    }
+  }, [email, password, navigateTo]);
   useEffect(() => {
     // Fetch users from API
     const fetchUsers = async () => {

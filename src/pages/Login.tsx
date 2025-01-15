@@ -1,6 +1,11 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { login } from "../store/userReducer";
+import { toast } from "react-toastify";
+
+import { useAppSelector } from "../hooks/hooks";
 interface LoginFormInputs {
   email: string;
   password: string;
@@ -12,20 +17,25 @@ const Login: React.FC = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<LoginFormInputs>();
-
+  const dispatch = useDispatch();
   const navigateTo = useNavigate();
+
+  const { email, password } = useAppSelector((state) => state.user);
   const onSubmit = (data: LoginFormInputs) => {
-    console.log("Login Data:", data);
-    // Handle API call for login
-    // Example:
-    // fetch('/api/login', {
-    //   method: 'POST',
-    //   headers: { 'Content-Type': 'application/json' },
-    //   body: JSON.stringify(data),
-    // }).then(response => response.json());
+    if (data.email === "anikets2408@gmail.com" && data.password === "1234") {
+      dispatch(login(data));
+      toast.success("Logged in successfully");
+    } else {
+      toast.error("Invalid credentials");
+    }
     navigateTo("/");
   };
 
+  useEffect(() => {
+    if (email && password) {
+      navigateTo("/");
+    }
+  }, [email, password, navigateTo]);
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="w-full max-w-md p-6 bg-white shadow-md rounded-lg">
